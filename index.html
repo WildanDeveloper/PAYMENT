@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domgeh Payment </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00D9FF;
+            --secondary: #7C3AED;
+            --dark: #0F172A;
+            --darker: #020617;
+            --success: #10B981;
+            --warning: #F59E0B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Simple animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 50%);
+            z-index: 0;
+            animation: bgPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Main container */
+        .payment-container {
+            position: relative;
+            z-index: 1;
+            max-width: 450px;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            box-shadow: 
+                0 0 0 1px rgba(0, 217, 255, 0.05),
+                0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Header */
+        .header {
+            padding: 32px 28px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, var(--primary) 0%, #0EA5E9 100%);
+            color: var(--darker);
+            font-weight: 900;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 20px;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+
+        /* Content */
+        .content {
+            padding: 28px;
+        }
+
+        /* QR Section */
+        .qr-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .qr-box {
+            position: relative;
+            display: inline-block;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        /* Glowing border effect */
+        .qr-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                var(--primary), 
+                var(--secondary), 
+                var(--primary));
+            background-size: 200% 200%;
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Corner dots */
+        .corner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        .corner.tl { top: 5px; left: 5px; animation: cornerBlink 1.5s ease infinite; }
+        .corner.tr { top: 5px; right: 5px; animation: cornerBlink 1.5s ease infinite 0.375s; }
+        .corner.bl { bottom: 5px; left: 5px; animation: cornerBlink 1.5s ease infinite 0.75s; }
+        .corner.br { bottom: 5px; right: 5px; animation: cornerBlink 1.5s ease infinite 1.125s; }
+
+        @keyframes cornerBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .qr-image-wrapper {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 260px;
+            height: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .download-btn {
+            margin-top: 16px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #6D28D9 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(124, 58, 237, 0.6);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Account box */
+        .account-box {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .account-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+
+        .account-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .account-number {
+            flex: 1;
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 1px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #0EA5E9 100%);
+            color: var(--darker);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+            white-space: nowrap;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Steps */
+        .steps-box {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .steps-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .step {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 14px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+        }
+
+        .step-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            line-height: 1.6;
+            padding-top: 6px;
+        }
+
+        /* Alert */
+        .alert {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .footer-link {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5);
+            transform: translateX(400px);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 9999;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .payment-container {
+                border-radius: 20px;
+            }
+
+            .header {
+                padding: 24px 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .qr-image-wrapper {
+                width: 220px;
+                height: 220px;
+            }
+
+            .account-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .account-number {
+                font-size: 18px;
+                text-align: center;
+            }
+
+            .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toast {
+                left: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="logo">DANA</div>
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>ACTIVE</span>
+                </div>
+            </div>
+            <h1>Payment Gateway</h1>
+            <p>Scan QR code atau transfer langsung ke nomor DANA</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- QR Section -->
+            <div class="qr-section">
+                <div class="qr-box">
+                    <div class="corner tl"></div>
+                    <div class="corner tr"></div>
+                    <div class="corner bl"></div>
+                    <div class="corner br"></div>
+                    
+                    <div class="qr-image-wrapper">
+                        <img src="https://autoresbot.com/tmp_files/74bb95e8-56c8-41d5-b9b3-3c432070153e.jpg" 
+                             alt="QR Code DANA" 
+                             class="qr-image"
+                             id="qrImage"
+                             crossorigin="anonymous"
+                             onerror="this.parentElement.innerHTML='<div style=\'display:flex;flex-direction:column;gap:8px;color:#666;\'><div style=\'font-size:40px;\'>⚠️</div><div style=\'font-size:12px;font-weight:600;\'>QR Tidak Tersedia</div></div>'">
+                    </div>
+                </div>
+                
+                <button class="download-btn" onclick="downloadQR()">
+                    <span>⬇</span>
+                    <span>Download QR</span>
+                </button>
+            </div>
+
+            <!-- Account -->
+            <div class="account-box">
+                <div class="account-label">
+                    <span class="live-dot"></span>
+                    <span>NOMOR DANA</span>
+                </div>
+                <div class="account-row">
+                    <div class="account-number" id="accountNumber">085182274078</div>
+                    <button class="copy-btn" onclick="copyNumber()">
+                        <span id="copyIcon">📋</span>
+                        <span id="copyText">SALIN</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="steps-box">
+                <div class="steps-title">📱 Cara Bayar</div>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Buka aplikasi DANA</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Pilih menu Scan atau Kirim</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Scan QR atau input nomor</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Masukkan jumlah & konfirmasi</div>
+                </div>
+            </div>
+
+            <!-- Alert -->
+            <div class="alert">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-text">
+                    <strong>Penting:</strong> Pastikan nomor tujuan benar. Transaksi tidak dapat dibatalkan.
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="footer-text">
+                Powered by <span class="footer-link">DANA Indonesia</span> • Secure Payment
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span>✓</span>
+        <span id="toastText">Berhasil!</span>
+    </div>
+
+    <script>
+        // Copy number function
+        function copyNumber() {
+            const number = document.getElementById('accountNumber').textContent;
+            const btn = document.querySelector('.copy-btn');
+            const icon = document.getElementById('copyIcon');
+            const text = document.getElementById('copyText');
+            
+            // Copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(number).then(() => {
+                    successCopy();
+                }).catch(() => fallbackCopy(number));
+            } else {
+                fallbackCopy(number);
+            }
+            
+            function successCopy() {
+                showToast('✓ Nomor berhasil disalin!');
+                icon.textContent = '✓';
+                text.textContent = 'TERSALIN';
+                btn.style.background = 'linear-gradient(135deg, #10B981 0%, #059669 100%)';
+                
+                setTimeout(() => {
+                    icon.textContent = '📋';
+                    text.textContent = 'SALIN';
+                    btn.style.background = 'linear-gradient(135deg, var(--primary) 0%, #0EA5E9 100%)';
+                }, 2000);
+            }
+            
+            function fallbackCopy(text) {
+                const input = document.createElement('input');
+                input.value = text;
+                input.style.position = 'fixed';
+                input.style.opacity = '0';
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                successCopy();
+            }
+        }
+
+        // Download QR function
+        function downloadQR() {
+            const img = document.getElementById('qrImage');
+            showToast('⏳ Mengunduh QR code...');
+            
+            fetch(img.src)
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'DANA-QR-085182274078.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    setTimeout(() => {
+                        showToast('✓ QR code berhasil diunduh!');
+                    }, 500);
+                })
+                .catch(() => {
+                    // Fallback: open in new tab
+                    window.open(img.src, '_blank');
+                    showToast('✓ QR code dibuka di tab baru');
+                });
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const text = document.getElementById('toastText');
+            text.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
